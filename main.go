@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+//connectionString := "postgres://postgres:postgres@localhost:5432/gator"
+
 func main() {
 	cfg, err := config.Read()
 	if err != nil{

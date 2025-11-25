@@ -3,10 +3,18 @@ package main
 import (
 	"fmt"
 	"github.com/jaharbaugh/gator/internal/config"
+	"github.com/jaharbaugh/gator/internal/database"
 	"os"
+	"database/sql"
+	_ "github.com/lib/pq"
 )
 
 //connectionString := "postgres://postgres:postgres@localhost:5432/gator"
+
+type state struct {
+	cfg *config.Config
+	db *database.Queries
+}
 
 func main() {
 	cfg, err := config.Read()
@@ -14,8 +22,16 @@ func main() {
 		panic(err)
 	}
 
+	db, err := sql.Open("postgres", cfg.DBURL)
+	if err != nil{
+		panic(err)
+	}
+	defer db.Close()
+	dbQueries := database.New(db)
+
 	s := state{
 		cfg: &cfg,
+		db: dbQueries,
 	}
 
 	cmds := commands{
@@ -23,6 +39,8 @@ func main() {
 	}
 
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
+	cmds.register("reset", handlerReset)
 
 	if len(os.Args) < 2{
 		fmt.Println("Invalid input")

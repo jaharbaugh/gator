@@ -9,7 +9,6 @@ import(
 	"github.com/google/uuid"
 )
 
-
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("No username provided")
@@ -42,13 +41,10 @@ func handlerRegister(s *state, cmd command) error{
 	newUser.UpdatedAt = time.Now().UTC()
 	newUser.Name = name
 
-
 	user, err := s.db.CreateUser(context.Background(), newUser); 
 	if err != nil{
 		return fmt.Errorf("couldn't create user: %w", err)
 	}
-
-
 
 	if err := s.cfg.SetUser(user.Name); err != nil {
     	return fmt.Errorf("couldn't set current user: %w", err)
@@ -57,7 +53,6 @@ func handlerRegister(s *state, cmd command) error{
 	fmt.Println("User created successfully!")
 	fmt.Printf("* ID: %v\n", user.ID)
 	fmt.Printf(" * Name: %v\n", user.Name)
-
 	return nil
 }
 
@@ -69,7 +64,6 @@ func handlerReset(s *state, cmd command) error {
 	}
 	fmt.Println("Database successfully reset.")
 	return nil
-
 }
 
 func handlerUsers(s *state, cmd command) error {
@@ -87,8 +81,6 @@ func handlerUsers(s *state, cmd command) error {
 		fmt.Printf("* %v\n", user)
 		}
 	}
-	
-
 	return nil
 }
 
@@ -102,5 +94,26 @@ func handlerAgg(s *state, cmd command) error{
 
 	fmt.Printf("%+v\n", feed)
 	
+	return nil
+}
+
+func handlerAddFeed(feedName string, feedURL string) error{
+	currentUser := s.db.User.ID
+
+	var newFeed database.CreateFeedParams
+	newFeed.ID = uuid.New()
+	newFeed.CreatedAt = time.Now().UTC()
+	newFeed.UpdatedAt = time.Now().UTC()
+	newFeed.Name = feedName
+	newFeed.URL = feedURL
+	newFeed.UserID = currentUser
+
+	dbQueries.database.CreateFeed(context.Background(), newFeed)
+
+	feed, err := fetchFeed(context.Background(), feedURL)
+	if err != nil{
+		return err
+	}
+
 	return nil
 }

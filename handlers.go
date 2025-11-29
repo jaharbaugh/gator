@@ -97,23 +97,36 @@ func handlerAgg(s *state, cmd command) error{
 	return nil
 }
 
-func handlerAddFeed(feedName string, feedURL string) error{
-	currentUser := s.db.User.ID
+func handlerAddFeed(s *state, cmd command) error{
+	
+	feedName := cmd.Args[0]
+    feedURL := cmd.Args[1]
+	
+	username := s.cfg.Current_User_Name
+	currentUser, err := s.db.GetUser(context.Background(), username)
+	if err != nil{
+		return err
+	}
+	
 
 	var newFeed database.CreateFeedParams
 	newFeed.ID = uuid.New()
 	newFeed.CreatedAt = time.Now().UTC()
 	newFeed.UpdatedAt = time.Now().UTC()
 	newFeed.Name = feedName
-	newFeed.URL = feedURL
-	newFeed.UserID = currentUser
+	newFeed.Url = feedURL
+	newFeed.UserID = currentUser.ID
 
-	dbQueries.database.CreateFeed(context.Background(), newFeed)
-
-	feed, err := fetchFeed(context.Background(), feedURL)
+	feeds, err := s.db.CreateFeed(context.Background(), newFeed)
 	if err != nil{
 		return err
 	}
+
+	fmt.Println("Feeds created successfully!")
+	fmt.Printf("* ID: %v\n", feeds.ID)
+	fmt.Printf("* Name: %v\n", feeds.Name)
+	fmt.Printf("* URL: %v\n", feeds.Url)
+	fmt.Printf("* UserID: %v\n", feeds.UserID)
 
 	return nil
 }

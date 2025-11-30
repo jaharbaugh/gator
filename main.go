@@ -45,7 +45,10 @@ func main() {
 	cmds.register("agg", handlerAgg)
 	cmds.register("addfeed", handlerAddFeed)
 	cmds.register("feeds", handlerFeeds)
+	cmds.register("follow", handlerFollow)
+	cmds.register("following", handlerFollowing)
 
+	
 	if len(os.Args) < 2{
 		fmt.Println("Invalid input")
 		os.Exit(1)
@@ -60,5 +63,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(cfg)
+	//fmt.Println(cfg)
 }

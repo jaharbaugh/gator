@@ -58,3 +58,24 @@ func handlerUsers(s *state, cmd command) error {
 	}
 	return nil
 }
+
+func handlerFollowing(s *state, cmd command) error {
+	ctx := context.Background()
+
+	username := s.cfg.Current_User_Name
+	currentUser, err := s.db.GetUser(context.Background(), username)
+	if err != nil{
+		return err
+	}
+	
+	listOfFeeds, err := s.db.GetFeedFollowsForUser(ctx, currentUser.ID)
+	if err != nil {
+		return err
+	}
+
+	for _, feed := range listOfFeeds{
+		fmt.Printf("* %v\n", feed.FeedName)
+	}
+
+	return nil
+}

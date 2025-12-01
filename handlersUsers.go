@@ -13,6 +13,8 @@ import(
 
 
 func handlerRegister(s *state, cmd command) error{
+	ctx := context.Background()
+	
 	if len(cmd.Args) != 1 {
     	return fmt.Errorf("usage: %s <name>", cmd.Name)
 	}
@@ -24,7 +26,7 @@ func handlerRegister(s *state, cmd command) error{
 	newUser.UpdatedAt = time.Now().UTC()
 	newUser.Name = name
 
-	user, err := s.db.CreateUser(context.Background(), newUser); 
+	user, err := s.db.CreateUser(ctx, newUser); 
 	if err != nil{
 		return fmt.Errorf("couldn't create user: %w", err)
 	}
@@ -42,7 +44,8 @@ func handlerRegister(s *state, cmd command) error{
 
 
 func handlerUsers(s *state, cmd command) error {
-	listOfUsers, err := s.db.GetUsers(context.Background())
+	ctx := context.Background()
+	listOfUsers, err := s.db.GetUsers(ctx)
 	if err != nil{
 		return fmt.Errorf("Error: %w", err)
 	}
@@ -76,6 +79,33 @@ func handlerFollowing(s *state, cmd command, user database.User) error {
 	for _, feed := range listOfFeeds{
 		fmt.Printf("* %v\n", feed.FeedName)
 	}
+
+	return nil
+}
+
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+	ctx := context.Background()
+	if len(cmd.Args) != 1 {
+    	return fmt.Errorf("usage: %s <url>")
+	}
+
+	url := cmd.Args[0]
+
+	feed, err := s.db.GetFeedByURL(ctx, url)
+	if err != nil{
+		return err
+	}
+
+	var  unfollow database.DeleteFollowByUserAndFeedParams
+	unfollow.UserID = user.ID
+	unfollow.FeedID = feed.ID
+
+	err = s.db.DeleteFollowByUserAndFeed(ctx, unfollow)
+	if err != nil{
+		return err
+	}
+
+	fmt.Println("Feed unfollow successful!")
 
 	return nil
 }

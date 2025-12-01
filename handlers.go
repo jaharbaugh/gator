@@ -10,12 +10,13 @@ import(
 )
 
 func handlerLogin(s *state, cmd command) error {
+	ctx := context.Background()
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("No username provided")
 	} 
 	username := cmd.Args[0]
 
-	_, err := s.db.GetUser(context.Background(), username)
+	_, err := s.db.GetUser(ctx, username)
 	if err != nil{
 		return fmt.Errorf("Could not find user:%w", err)
 	}
@@ -32,7 +33,8 @@ func handlerLogin(s *state, cmd command) error {
 
 
 func handlerReset(s *state, cmd command) error {
-	err := s.db.DeleteUsers(context.Background())
+	ctx := context.Background()
+	err := s.db.DeleteUsers(ctx)
 	if err != nil{
 		return fmt.Errorf("Error: %w", err)
 	}
@@ -43,9 +45,10 @@ func handlerReset(s *state, cmd command) error {
 
 
 func handlerAgg(s *state, cmd command) error{
+	ctx := context.Background() 
 	feedURL := "https://www.wagslane.dev/index.xml"
 	
-	feed, err := fetchFeed(context.Background(),feedURL)
+	feed, err := fetchFeed(ctx,feedURL)
 	if err != nil{
 		return err
 	}

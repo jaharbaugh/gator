@@ -59,7 +59,9 @@ func handlerAddFeed(s *state, cmd command, user database.User) error{
 }
 
 func handlerFeeds(s *state, cmd command) error{
-	listOfFeeds, err := s.db.GetFeeds(context.Background())
+	ctx := context.Background()
+	
+	listOfFeeds, err := s.db.GetFeeds(ctx)
 	if err != nil{
 		return fmt.Errorf("Error: %w", err)
 	}

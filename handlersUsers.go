@@ -59,16 +59,16 @@ func handlerUsers(s *state, cmd command) error {
 	return nil
 }
 
-func handlerFollowing(s *state, cmd command) error {
+func handlerFollowing(s *state, cmd command, user database.User) error {
 	ctx := context.Background()
 
-	username := s.cfg.Current_User_Name
-	currentUser, err := s.db.GetUser(context.Background(), username)
-	if err != nil{
-		return err
-	}
+	//username := s.cfg.Current_User_Name
+	//currentUser, err := s.db.GetUser(context.Background(), username)
+	//if err != nil{
+	//	return err
+	//}
 	
-	listOfFeeds, err := s.db.GetFeedFollowsForUser(ctx, currentUser.ID)
+	listOfFeeds, err := s.db.GetFeedFollowsForUser(ctx, user.ID)
 	if err != nil {
 		return err
 	}

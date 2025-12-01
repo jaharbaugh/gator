@@ -9,7 +9,7 @@ import(
 	"github.com/google/uuid"
 )
 
-func handlerAddFeed(s *state, cmd command) error{
+func handlerAddFeed(s *state, cmd command, user database.User) error{
 	ctx := context.Background()
 
 	if len(cmd.Args) != 2 {
@@ -19,11 +19,11 @@ func handlerAddFeed(s *state, cmd command) error{
 	feedName := cmd.Args[0]
     feedURL := cmd.Args[1]
 	
-	username := s.cfg.Current_User_Name
-	currentUser, err := s.db.GetUser(ctx, username)
-	if err != nil{
-		return err
-	}
+	//username := s.cfg.Current_User_Name
+	//currentUser, err := s.db.GetUser(ctx, username)
+	//if err != nil{
+	//	return err
+	//}
 	
 	var newFeed database.CreateFeedParams
 	newFeed.ID = uuid.New()
@@ -31,7 +31,7 @@ func handlerAddFeed(s *state, cmd command) error{
 	newFeed.UpdatedAt = time.Now().UTC()
 	newFeed.Name = feedName
 	newFeed.Url = feedURL
-	newFeed.UserID = currentUser.ID
+	newFeed.UserID = user.ID
 
 	feeds, err := s.db.CreateFeed(ctx, newFeed)
 	if err != nil{
@@ -42,7 +42,7 @@ func handlerAddFeed(s *state, cmd command) error{
     ID: uuid.New(),
 	CreatedAt: time.Now().UTC(),
 	UpdatedAt: time.Now().UTC(),
-	UserID: currentUser.ID,
+	UserID: user.ID,
     FeedID: feeds.ID,
 	})
 	if err != nil {
@@ -76,7 +76,7 @@ func handlerFeeds(s *state, cmd command) error{
 }
 
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 1 {
     	return fmt.Errorf("usage: %s <url>")
 	}
@@ -84,10 +84,10 @@ func handlerFollow(s *state, cmd command) error {
 	url := cmd.Args[0]
 	ctx := context.Background()
 	
-	currentUser, err := s.db.GetUser(ctx, s.cfg.Current_User_Name)
-	if err != nil{
-		return err
-	}
+	//currentUser, err := s.db.GetUser(ctx, s.cfg.Current_User_Name)
+	//if err != nil{
+	//	return err
+	//}
 	currentFeed, err := s.db.GetFeedByURL(ctx, url)
 	if err != nil{
 		return err
@@ -100,7 +100,7 @@ func handlerFollow(s *state, cmd command) error {
 	newFeedFollow.CreatedAt = time.Now().UTC()
 	newFeedFollow.UpdatedAt = time.Now().UTC()
 	newFeedFollow.FeedID = currentFeed.ID
-	newFeedFollow.UserID = currentUser.ID
+	newFeedFollow.UserID = user.ID
 
 
 

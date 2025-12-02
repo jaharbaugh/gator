@@ -10,6 +10,8 @@ import (
 	//"context"
 )
 
+// goose migration goose -dir ./sql/schema postgres "host=localhost port=5432 user=bootdev password=bootdev dbname=bootdev sslmode=disable" up
+
 //connectionString := "postgres://postgres:postgres@localhost:5432/gator"
 
 type state struct {

@@ -3,16 +3,17 @@ import(
 //	"fmt"
 //	"github.com/jaharbaugh/gator/internal/config"
 	"github.com/jaharbaugh/gator/internal/database"
+	"github.com/jaharbaugh/gator/internal/app"
 //	"os"
 //	"database/sql"
 //	_ "github.com/lib/pq"
-	"context"
+//	"context"
 )
-func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) error) func(*state, command) error{
-	ctx := context.Background()
-	return func (s *state, cmd command) error {
-	username := s.cfg.Current_User_Name
-	currentUser, err := s.db.GetUser(ctx, username)
+func middlewareLoggedIn(handler func(s *app.State, cmd app.Command, user database.User) error) func(*app.State, app.Command) error{
+	
+	return func (s *app.State, cmd app.Command) error {
+	username := s.CFG.Current_User_Name
+	currentUser, err := s.DB.GetUser(s.CTX, username)
 	if err != nil{
 		return err
 	}

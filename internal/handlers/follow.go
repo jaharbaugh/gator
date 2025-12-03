@@ -20,8 +20,6 @@ func HandlerFollow(s *app.State, cmd app.Command, user database.User) error {
 		return err
 	}
 
-
-
 	var newFeedFollow database.CreateFeedFollowParams
 	newFeedFollow.ID = uuid.New()
 	newFeedFollow.CreatedAt = time.Now().UTC()

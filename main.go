@@ -52,7 +52,7 @@ func main() {
 	cmds.Register("follow", middlewareLoggedIn(handlers.HandlerFollow))
 	cmds.Register("following", middlewareLoggedIn(handlers.HandlerFollowing))
 	cmds.Register("unfollow", middlewareLoggedIn(handlers.HandlerUnfollow))
-	//cmds.Register("browse", handlerBrowse)
+	cmds.Register("browse", middlewareLoggedIn(handlers.HandlerBrowse))
 
 
 	if len(os.Args) < 2{
@@ -69,5 +69,4 @@ func main() {
 		os.Exit(1)
 	}
 
-	//fmt.Println(CFG)
 }
